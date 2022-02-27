@@ -1,0 +1,1 @@
+export * from './after_login_donor_reg.component'
