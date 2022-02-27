@@ -1,0 +1,51 @@
+body{background-color:#84bf76;}
+.button {
+  background-color: #e40026;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+body{background-color:#84bf76;}
+/*div menubar css*/
+#menubar{width:810px; margin-left:auto;  margin-right:auto; margin-top:80px; height:auto;}
+h1{
+    font-style:oblique;
+    font-family: 'Times New Roman', Times, serif;
+}
+ul {
+  text-transform:uppercase;
+  text-align: left;
+  display: inline;
+  margin: 0;
+  padding: 15px 4px 17px 0;
+  list-style: none;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+}
+
+ul li {
+  font: bold 12px/18px sans-serif;
+  display: inline-block;
+  margin-right: -5px;
+  position: relative;
+  padding: 15px 20px;
+  background: #f7f7f7;
+  color:#6aa25d;
+  cursor: pointer;
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+}
+ul li:hover {
+  background: #6aa25d;
+  color: #f7f7f7;
+  }
