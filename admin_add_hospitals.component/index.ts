@@ -1,0 +1,1 @@
+export * from './admin_add_hospitals.component'
