@@ -1,1 +1,0 @@
-export * from './view_list_admin.component'
