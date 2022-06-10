@@ -1,0 +1,102 @@
+service: Automate-ticket-creation-from-email
+frameworkVersion: '3'
+	
+plugins:
+  - serverless-iam-roles-per-function
+
+custom:
+  accountId:  AWS::AccountId
+  bucket: redmine-ticket-create-2
+  bucketref: S3Redmine-ticket-create-2
+  lambda: redmine-ticket-create-2
+
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  iam:
+    role:
+      name: redmine-email
+      statements:
+      - Effect: Allow
+        Action: logs:CreateLogGroup
+        Resource: !Sub 'arn:aws:logs:us-east-1:${AWS::AccountId}:*'
+      - Effect: Allow
+        Action:
+        - logs:CreateLogStream
+        - logs:PutLogEvents
+        Resource:
+          - !Sub 'arn:aws:logs:us-east-1:${AWS::AccountId}:log-group:/aws/lambda/${self:custom.lambda}'
+      - Effect: Allow
+        Action: 
+        - ses:SendEmail
+        - ses:SendRawEmail
+        Resource: 
+          - !Sub 'arn:aws:ses:us-east-1:${AWS::AccountId}:identity/testsupport.bizcloudexperts.com'
+      - Effect: Allow
+        Action:
+        - s3:*
+        Resource:
+        - { Fn::Join: ['', ['arn:aws:s3:::', "${self:custom.bucket}", '/*'] ] }
+        - { Fn::Join: ['', ['arn:aws:s3:::', "${self:custom.bucket}"] ] }
+
+
+
+resources:
+  Resources:
+    Mys3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.bucket}  
+        PublicAccessBlockConfiguration : 
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true                                        
+    bucketpermissions:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: ${self:custom.bucket}
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Sid: AllowSESPuts
+            Effect: Allow
+            Principal:
+              Service: ses.amazonaws.com
+              AWS:
+                - !Sub 'arn:aws:iam::${AWS::AccountId}:role/redmine-email'
+            Action: 
+              - s3:PutObject
+              - s3:GetObject
+            Resource: 
+              Fn::Join: ['', ['arn:aws:s3:::', "${self:custom.bucket}", '/*'] ]                    
+            Condition:
+              StringEquals:
+                AWS:SourceAccount: !Sub ${AWS::AccountId} 
+             
+
+configValidationMode: warn
+
+layers:
+  layerone:                                                              
+    path: layer
+    compatibleRuntimes: python3.9
+    description: redmine library to create ticket
+
+
+functions:
+    lambda_handler:
+      handler: handler.lambda_handler
+      name: ${self:custom.lambda}
+      timeout: 15
+      events:
+        - s3:
+            bucket: ${self:custom.bucket}                                            
+            event: s3:ObjectCreated:*
+            existing: true
+      layers:
+        - Ref: LayeroneLambdaLayer 
+      environment:
+        ACCOUNT_ID: !Sub ${AWS::AccountId}
