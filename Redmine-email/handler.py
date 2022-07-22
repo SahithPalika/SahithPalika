@@ -81,7 +81,7 @@ def lambda_handler(event, context):
     #Default Priority
     default_priority = 5
     
-    redmine = Redmine('https://agiledev.bizcloudexperts.com', key='46f2b42985f276af85d8acc47e59445a4b2f1671')
+    redmine = Redmine('https://agiledev.bizcloudexperts.com', key='')
     user = redmine.auth()
         
     new_ticket=redmine.issue.create(
